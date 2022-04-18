@@ -1,41 +1,39 @@
 import torch
 import torch.nn as nn
-from Time2Vector import Time2Vector
+# from Time2Vector import Time2Vector
 
 class PricePredictionModel(nn.Module):
-    def __init__(self, nSignal, nClasses, device, dropout, embedding=True, hiddenDim=64):
+    def __init__(self, nSignal, nClasses, args):
         super(PricePredictionModel, self).__init__()
 
-        self.device = device
+        self.device = torch.device(args.device)
 
         self.activation = nn.ReLU()
-
+        self.dropout = args.dropout
+        self.args = args
         # drop layer param
-        self.dropLayer = nn.Dropout(p=dropout)
+        self.dropLayer = nn.Dropout(p=args.dropout)
 
         self.softmax = nn.Softmax(dim=-1)
 
         # lstm param
-        self.hiddenDim = hiddenDim  # 4 inputs need 1 hidden dim
+        self.hiddenDim = args.ff_dims  # 4 inputs need 1 hidden dim
         self.nLayers = 1  # lstm hidden layer
-        self.embed = embedding
-        self.embedding = Time2Vector(input_size=nSignal, hidden_size=self.hiddenDim)
-        self.lstmInput = self.hiddenDim if embedding else nSignal
-        self.lstm = nn.LSTM(self.lstmInput, self.hiddenDim, self.nLayers, batch_first=True, dropout = dropout)
+        # self.embedding = Time2Vector(input_size=nSignal, hidden_size=self.hiddenDim)
+        self.lstmInput = nSignal
+        self.lstm = nn.LSTM(self.lstmInput, self.hiddenDim, self.nLayers, batch_first=True)
 
         # linear layers
         self.fc1 = nn.Linear(self.hiddenDim, 256)
         self.fcOut = nn.Linear(256, nClasses)
 
     def forward(self, state):
-        if self.embed:
-            state = torch.squeeze(state,0)
-            state = self.embedding(state)
-            state = state.unsqueeze(0)
         # Initialize hidden state with zeros
         h0 = torch.zeros(self.nLayers, state.size(0), self.hiddenDim).to(self.device)
         # Initialize cell state
         c0 = torch.zeros(self.nLayers, state.size(0), self.hiddenDim).to(self.device)
+        
+        # print(f'state {state.shape}, h0 {h0.shape}  c0 {c0.shape}')
         out, (hn, cn) = self.lstm(state, (h0, c0))
 
         # Index hidden state of last time step
@@ -53,7 +51,7 @@ class PricePredictionModel(nn.Module):
         return out
 
     def selectClass(self, state):
-        state = torch.from_numpy(state).unsqueeze(0).float().to(self.device)
+        state = torch.from_numpy(state).float().to(self.device)
         out = self.forwardLinear(state)
         out = out.squeeze(0)
 

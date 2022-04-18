@@ -26,10 +26,14 @@ def printOkCYAN(msg):
     print(f'{bcolors.OKCYAN}{msg}{bcolors.ENDC}')
 def printFail(msg):
     print(f'{bcolors.FAIL}{msg}{bcolors.ENDC}')
-
-
+    
 
 def cls(line): print("\n" * 30)
+
+class AttrDict(dict):
+    def __init__(self, *args, **kwargs):
+        super(AttrDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
 
 
 def saveDataFrame(fileName, dataframe, directory, i=False, js = False,csv = True):
@@ -134,8 +138,17 @@ def getTrainTestDataList(stockTicker,baseDataFolder, trainStartDate,trainEndDate
 
         index = index + 1
     
+    trainDFList, testDFlist = [], []
+    
+    dataDir = getStockDir(stockTicker,baseDataFolder)
+    for file in trainList:
+        trainDFList.append(pd.read_csv(f'{dataDir}/{file}'))
+    
+    for file in testList:  
+        testDFlist.append(pd.read_csv(f'{dataDir}/{file}'))
+    
     if printing:
         print('trainList: \n {} \n'.format(trainList))
         print('testList: \n {} \n'.format(testList))
 
-    return trainList,testList
+    return trainList,testList, trainDFList, testDFlist

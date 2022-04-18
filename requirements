@@ -4,3 +4,4 @@ scipy
 numpy
 torchvision
 torchaudio
+sklearn
