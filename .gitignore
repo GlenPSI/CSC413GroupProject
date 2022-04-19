@@ -1,2 +1,6 @@
 base_model/log/*
 csc413env/*
+.ipynb_checkpoints/baseModel-checkpoint.ipynb
+base_model/__pycache__/trendNN_value.cpython-38.pyc
+base_model/__pycache__/util.cpython-38.pyc
+__pycache__/CSC413.cpython-38.pyc

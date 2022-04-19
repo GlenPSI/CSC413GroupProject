@@ -48,6 +48,9 @@ class PricePredictionModel(nn.Module):
         out = self.ffOut(out)
         out = out.squeeze(1)
 
+        # out = self.dropLayer(self.activation(self.fc1(out)))
+        # out = self.fcOut(out)
+        # out = out.squeeze(0)
         return out
 
     def forwardLinear(self, state):
