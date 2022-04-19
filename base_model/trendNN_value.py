@@ -28,19 +28,22 @@ class PricePredictionModel(nn.Module):
         self.fcOut = nn.Linear(256, nClasses)
 
     def forward(self, state):
+        
+        # state = torch.from_numpy(state).float().to(self.device)
         # Initialize hidden state with zeros
         h0 = torch.zeros(self.nLayers, state.size(0), self.hiddenDim).to(self.device)
         # Initialize cell state
         c0 = torch.zeros(self.nLayers, state.size(0), self.hiddenDim).to(self.device)
         
-        # print(f'state {state.shape}, h0 {h0.shape}  c0 {c0.shape}')
         out, (hn, cn) = self.lstm(state, (h0, c0))
 
         # Index hidden state of last time step
         # Read out last time step hidden states
         out = out[:, -1, :]
-        # out = out.squeeze()[-1, :]
 
+        # out = self.dropLayer(self.activation(self.fc1(out)))
+        # out = self.fcOut(out)
+        # out = out.squeeze(0)
         return out
 
     def forwardLinear(self, state):
@@ -56,3 +59,4 @@ class PricePredictionModel(nn.Module):
         out = out.squeeze(0)
 
         return out
+    
