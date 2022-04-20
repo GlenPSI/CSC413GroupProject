@@ -5,3 +5,5 @@ numpy
 torchvision
 torchaudio
 sklearn
+torchdiffeq
+git+https://github.com/patrick-kidger/torchcde.git

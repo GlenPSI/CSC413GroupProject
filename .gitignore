@@ -4,3 +4,7 @@ csc413env/*
 base_model/__pycache__/trendNN_value.cpython-38.pyc
 base_model/__pycache__/util.cpython-38.pyc
 __pycache__/CSC413.cpython-38.pyc
+models/__pycache__/ODE.cpython-38.pyc
+models/__pycache__/simpleLSTM.cpython-38.pyc
+models/__pycache__/trendNN_value.cpython-38.pyc
+models/__pycache__/util.cpython-38.pyc
